@@ -13,7 +13,6 @@
 #include "Camera.h"
 #include "mjpg_streamer.h"
 #include "LinuxDARwIn.h"
-//#include "myfunc.h"
 
 #define INI_FILE_PATH       "config.ini"
 #define U2D_DEV_NAME        "/dev/ttyUSB0"
@@ -23,15 +22,16 @@ using namespace std;
 
 void showvalue()
 {
-	printf("Walking::GetInstance()->A_MOVE_AMPLITUDE= %f\n", Walking::GetInstance()->A_MOVE_AMPLITUDE);
 	printf("Walking::GetInstance()->X_MOVE_AMPLITUDE= %f\n", Walking::GetInstance()->X_MOVE_AMPLITUDE);
+	printf("Walking::GetInstance()->PERIOD_TIME= %f\n", Walking::GetInstance()->PERIOD_TIME);
 }
 
 void inc()
 {
-	//Walking::GetInstance()->A_MOVE_AMPLITUDE+=10;
-	Walking::GetInstance()->X_MOVE_AMPLITUDE+=10;
+	Walking::GetInstance()->X_MOVE_AMPLITUDE-=10;
+	//Walking::GetInstance()->PERIOD_TIME+=50;
 }
+
 void change_current_dir()
 {
     char exepath[1024] = {0};
@@ -42,27 +42,11 @@ void change_current_dir()
 int main(void)
 {
 	int count=0;
-    	
+
 	printf( "\n===== Ball following Tutorial for DARwIn =====\n\n");
 
     	change_current_dir();
-
-	Image* rgb_ball = new Image(Camera::WIDTH, Camera::HEIGHT, Image::RGB_PIXEL_SIZE);
-
-	minIni* ini = new minIni(INI_FILE_PATH);
-
-	LinuxCamera::GetInstance()->Initialize(0);
-	LinuxCamera::GetInstance()->LoadINISettings(ini);
-
-	mjpg_streamer* streamer = new mjpg_streamer(Camera::WIDTH, Camera::HEIGHT);
-
-	ColorFinder* ball_finder = new ColorFinder();
-	ball_finder->LoadINISettings(ini);
-	httpd::ball_finder = ball_finder;
-
-	BallTracker tracker = BallTracker();
-	BallFollower follower = BallFollower();
-	follower.DEBUG_PRINT = true;
+	printf( "\n===== Ball following Tutorial for DARwIn =====\n\n");
 
 	//////////////////// Framework Initialize ////////////////////////////
 	LinuxCM730 linux_cm730(U2D_DEV_NAME);
@@ -72,11 +56,14 @@ int main(void)
 		printf("Fail to initialize Motion Manager!\n");
 			return 0;
 	}
+	printf( "\n===== Ball following Tutorial for DARwIn =====\n\n");
 	MotionManager::GetInstance()->AddModule((MotionModule*)Head::GetInstance());
 	MotionManager::GetInstance()->AddModule((MotionModule*)Walking::GetInstance());
     	LinuxMotionTimer *motion_timer = new LinuxMotionTimer(MotionManager::GetInstance());
     	motion_timer->Start();
 	/////////////////////////////////////////////////////////////////////
+
+	printf( "\n===== Ball following Tutorial for DARwIn =====\n\n");
 
 	int n = 0;
 	int param[JointData::NUMBER_OF_JOINTS * 5];
@@ -104,6 +91,7 @@ int main(void)
 	cm730.SyncWrite(MX28::P_GOAL_POSITION_L, 5, JointData::NUMBER_OF_JOINTS - 1, param);	
 	//////////////////////////////////////////////////////////////////////
 
+	printf( "\n===== Ball following Tutorial for DARwIn =====\n\n");
 
 	//////////////////////////////////////////////////////////////////////
 	Head::GetInstance()->m_Joint.SetEnableHeadOnly(true, true);
@@ -111,24 +99,29 @@ int main(void)
 	MotionManager::GetInstance()->SetEnable(true);
 	//////////////////////////////////////////////////////////////////////
 
+		printf( "\n===== Ball following Tutorial for DARwIn =====\n\n");
+
 	Walking::GetInstance()->X_MOVE_AMPLITUDE = 10.0;//initialize value of variables
- 	Walking::GetInstance()->A_MOVE_AMPLITUDE = 10.0;
+	Walking::GetInstance()->PERIOD_TIME = 1000.0;
+	
+	
+	printf( "\n===== Ball following Tutorial for DARwIn =====\n\n");
 
 	printf("Press the ENTER key to begin!\n");
 	getchar();
+	printf( "\n===== Ball following Tutorial for DARwIn =====\n\n");
 
 while(count<8)//limit max value
 {
  	Walking::GetInstance()->Start();//start walking
 	showvalue();
-	printf("Press the ENTER key to increase value! \ncount=%d \n", count);	
+	printf("Press the ENTER key to decrease stride length of each step! \ncount=%d \n", count);	
 	getchar();
 	inc();
 	count++;
 } 
 
 	Walking::GetInstance()->Stop(); //walking stops when variables reahes max value
-
 
     return 0;
 }
