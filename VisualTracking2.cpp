@@ -3,6 +3,15 @@
 #include <webots/LED.hpp>
 #include <webots/Camera.hpp>
 #include <managers/DARwInOPVisionManager.hpp>
+#include <stdlib.h>
+
+#include "ColorFinder.h"
+#include "ImgProcess.h"
+
+#include <string>
+#include "Point.h"
+#include "Image.h"
+#include "minIni.h"
 
 #include <cstdlib>
 #include <cmath>
@@ -12,6 +21,7 @@
 using namespace webots;
 using namespace managers;
 using namespace std;
+using namespace Robot;
 
 static const char *servoNames[NSERVOS] = {
   "ShoulderR" /*ID1 */, "ShoulderL" /*ID2 */, "ArmUpperR" /*ID3 */, "ArmUpperL" /*ID4 */,
@@ -66,14 +76,7 @@ void VisualTracking::run() {
 
   while (true) {
     
-    bool ballInFieldOfView = mVisionManager->getBallCenter(x, y, mCamera->getImage());
-	//3rd argument is const unsigned char array
-	//converts image to HSV format and save as Point2D class
-	//looks for ball in HSV format
-            //true if present and give value to X n Y
-	//false if absent and x n y == 0.0
-	//save value to ballInFieldOfView
-	//use ColorFinder Class in getBallCenter() to find ball
+    
     	
     if(yold != y || xold !=x){
       cout << "x= "<< x <<" y= "<< y <<" Detected: "<< ballInFieldOfView<< endl;
@@ -86,22 +89,22 @@ void VisualTracking::run() {
       mEyeLED->set(0xFF0000);
     
     // Move the head in direction of the ball if it has been found
-    if(ballInFieldOfView) {
+    //if(ballInFieldOfView) {
       // Horizontal
-      if(x > 0.6 * mCamera->getWidth())
-        horizontal -= 0.05;
+    //  if(x > 0.6 * mCamera->getWidth())
+    //    horizontal -= 0.05;
       //if ball is located >216, ie too right, horizontal goes into -ve to turn neck left
-      else if(x < 0.4 * mCamera->getWidth())
-        horizontal += 0.05;
+    // else if(x < 0.4 * mCamera->getWidth())
+    //    horizontal += 0.05;
       //if ball is located >216, ie too left, horizontal goes into +ve to turn neck right
 	  // Vertical
-      if(y > 0.6 * mCamera->getHeight())
-        vertical -= 0.02;
-      else if(y < 0.4 * mCamera->getHeight())
-        vertical += 0.02;
+    //  if(y > 0.6 * mCamera->getHeight())
+    //    vertical -= 0.02;
+    //  else if(y < 0.4 * mCamera->getHeight())
+    //    vertical += 0.02;
 		//making coordinate within 144 to 216 in X axis
 		//and 96 to 144 in the Y axis of camera	frame
-    }
+    //}
     
     //mServos[18]->setPosition(horizontal);//neck servo in charge of panning
     //mServos[19]->setPosition(vertical);//head servo in charge of tilting
