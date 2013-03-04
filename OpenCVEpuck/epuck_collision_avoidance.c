@@ -32,12 +32,12 @@ int main(int argc, char **argv)
   wb_camera_enable(camera,TIME_STEP);
   
 ////////////////////
- int width =  wb_camera_get_width(camera);
+  int width =  wb_camera_get_width(camera);
   int height = wb_camera_get_height(camera);
   IplImage* imgOpencv = cvCreateImage(cvSize(width, height), IPL_DEPTH_8U, 3);
-  unsigned char* data = (unsigned char *)imgOpencv->imageData;
+  unsigned char* image = (unsigned char *)imgOpencv->imageData;
   //cvNamedWindow( "Example1", CV_WINDOW_AUTOSIZE);
-  const unsigned char* image;
+  unsigned char* data;
   int max = height * width * 3;
 /////////////////////  
   
@@ -46,8 +46,19 @@ int main(int argc, char **argv)
     if (delay == -1) // exit event from webots
       break;
 //////////////
-    wb_camera_save_image(camera,"myimage.jpg",1);
+    wb_camera_save_image(camera,"myimage.jpg",100);
     imgOpencv = cvLoadImage( "myimage.jpg",CV_LOAD_IMAGE_COLOR );
+    
+    int i=0;
+    for (i = 0; i < max; i += 3)
+    {
+      data[i] = image[i+2];
+      data[i+1] = image[i+1];
+      data[i+2] = image[i];
+    }
+    
+    imgOpencv->imageData = data;
+    
     //cvShowImage("Example1", imgOpencv);
     cvReleaseImage( &imgOpencv );
 
