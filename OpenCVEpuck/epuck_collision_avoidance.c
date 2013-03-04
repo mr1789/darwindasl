@@ -32,18 +32,13 @@ int main(int argc, char **argv)
   wb_camera_enable(camera,TIME_STEP);
   
 ////////////////////
-  int width =  wb_camera_get_width(camera);
+ int width =  wb_camera_get_width(camera);
   int height = wb_camera_get_height(camera);
-  int numberChannel;
-  
   IplImage* imgOpencv = cvCreateImage(cvSize(width, height), IPL_DEPTH_8U, 3);
-  int widthStep = imgOpencv->widthStep;
-  int nChannels	= imgOpencv->nChannels;
   unsigned char* data = (unsigned char *)imgOpencv->imageData;
-  int row, col;
-  unsigned char imgPixel;
   //cvNamedWindow( "Example1", CV_WINDOW_AUTOSIZE);
   const unsigned char* image;
+  int max = height * width * 3;
 /////////////////////  
   
   while (1) { 
