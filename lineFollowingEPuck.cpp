@@ -47,7 +47,8 @@ int find_middle(int tab[], int sizeTab){
   int i,j;
   int *copy = (int *)malloc(sizeof(int)*sizeTab);
   int mean=0;
-  int nb_best = sizeTab/10;//a tenth of camera width
+  int nb_best = sizeTab/10;
+  ////a tenth of camera width
   int *index_bests = (int *)malloc(sizeof(int)*nb_best);
   
   // copy the tab, calculate the mean and
@@ -56,14 +57,17 @@ int find_middle(int tab[], int sizeTab){
   for (i=0; i<sizeTab;i++){
     copy[i]=tab[i];
     mean+=tab[i];
-    if (tab[i]!=tab[0]) identical=0;//if last pixel!=1st pixel, identical==0
+    if (tab[i]!=tab[0]) identical=0;
+	////if last pixel!=1st pixel, identical==0
   }
   if (identical) {
     free(copy);
 	free(index_bests);
-    return sizeTab/2;//delta in lfm()==sizeTab/2 if last and 1st pixel r same
+    return sizeTab/2;
+	////delta in lfm()==sizeTab/2 if last and 1st pixel r same
   }
-  mean/=sizeTab;//mean==avg value of all the pixel in the line
+  mean/=sizeTab;
+  ////mean==avg value of all the pixel in the line
   
   // take the best values of the tab
   for (i=0; i<nb_best; i++){
@@ -133,9 +137,9 @@ int lfm_speed[2] = {0,0};
 int lfm_active = 1;
 void lfm(int array[], int size){
   if (lfm_active){
-    int delta = find_middle(array,size)-width/2;//delta can be negative
+    int delta = find_middle(array,size)-width/2;
     lfm_speed[LEFT]=MAX_DELTA*delta/size;
-    lfm_speed[RIGHT]=-lfm_speed[LEFT];//give adjustments to default speed, speed[LEFT] and  speed[right]
+    lfm_speed[RIGHT]=-lfm_speed[LEFT];////give adjustments to default speed, speed[LEFT] and  speed[right]
   } else {
     lfm_speed[RIGHT]=lfm_speed[LEFT]=0;
   }
@@ -154,9 +158,9 @@ void lem(int array[], int size){
   int i;
   
   for (i=0;i<size/10;i++){
-    left[i]=array[i];//value of top most line of camera on leftmost tenth pixels
-    right[i]=array[size-1-i];//value of top most line of camera on rightmost tenth pixels
-    middle[i]=array[size/2-size/20+i];//value of middle tenth of pixel of camera(start at twentith frm middle of camera)
+    left[i]=array[i];////value of top most line of camera on leftmost tenth pixels
+    right[i]=array[size-1-i];////value of top most line of camera on rightmost tenth pixels
+    middle[i]=array[size/2-size/20+i];////value of middle tenth of pixel of camera(start at twentith frm middle of camera)
   }
   
   current_mean[0] = mean(left, size/10);
@@ -164,7 +168,8 @@ void lem(int array[], int size){
   current_mean[2] = mean(right, size/10);
 
   for (i=0;i<3;i++){
-    if (current_mean[i]>previous_mean[i]+SENSIBILITY){//each side black enough, is_in[]=1
+    if (current_mean[i]>previous_mean[i]+SENSIBILITY){
+	////if each section is "black" enough, is_in[]=1
       is_in[i]=1;
     }
   }
@@ -178,7 +183,7 @@ void lem(int array[], int size){
   }
   free(left);
   free(right);
-  free(middle);//disallocate the mallocated pointer variables
+  free(middle);
 }
 // line leaving module
 void llm(int array[], int size){
@@ -243,14 +248,15 @@ static int run(void) {
   int i;
   int *grey = (int *)malloc(sizeof(int)*width);
   int speed[2]={150,150};
+  ////default fixed speed, whther Epuck is on line or not
   const unsigned char *image;
     
   // 1. Get the sensors values
   image = wb_camera_get_image(cam);
   for (i = 0; i < width; i++) {
     grey[i] = 255-wb_camera_image_get_grey(image, width, i, 0);
-	//0 = black, 255 = white, so 255-0=255 in grey[i] = black, value proportionate to value of black
-	//capture just 1 line for the width at the top of the camera vision
+	////0 = black, 255 = white, so 255-0=255 in grey[i] = black (value representation is now reversed
+	////capture just 1 line for the width at the top of the camera vision
   }
   
   // 2. Behavior-based robotic:

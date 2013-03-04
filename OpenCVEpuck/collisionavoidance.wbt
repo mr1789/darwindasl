@@ -1,0 +1,142 @@
+#VRML_SIM V6.0 utf8
+WorldInfo {
+  info [
+    "Description"
+    "Author: first name last name <e-mail>"
+    "Date: DD MMM YYYY"
+  ]
+  basicTimeStep 16
+}
+Viewpoint {
+  orientation -0.1258 0.785726 0.605647 2.73586
+  position 0.269413 1.94042 -0.508852
+}
+Background {
+  skyColor [
+    0.4 0.7 1
+  ]
+}
+DirectionalLight {
+  ambientIntensity 0.5
+  direction 1 -2 1
+  castShadows TRUE
+}
+DEF FLOOR CheckeredFloor {
+}
+EPuck {
+  translation 0.197577 -3.19825e-05 -0.0284295
+  rotation 4.11548e-05 1 -1.70338e-05 0.498814
+  controller "epuck_collision_avoidance"
+  camera_windowPosition 0.241323 0.853219
+  camera_width 360
+  camera_height 240
+  camera_pixelSize 1
+}
+DEF BALL Solid {
+  translation -0.110272 0.0495891 -0.149016
+  children [
+    Shape {
+      appearance Appearance {
+        texture ImageTexture {
+          url [
+            "textures/bricks.png"
+          ]
+        }
+      }
+      geometry DEF ballGeometry Sphere {
+        radius 0.05
+        subdivision 2
+      }
+    }
+  ]
+  boundingObject USE ballGeometry
+  physics Physics {
+  }
+}
+DEF BALL Solid {
+  translation -0.005384 0.0495891 -0.174183
+  children [
+    Shape {
+      appearance Appearance {
+        texture ImageTexture {
+          url [
+            "textures/bricks.png"
+          ]
+        }
+      }
+      geometry DEF ballGeometry Sphere {
+        radius 0.05
+        subdivision 2
+      }
+    }
+  ]
+  boundingObject USE ballGeometry
+  physics Physics {
+  }
+}
+DEF BALL Solid {
+  translation 0.0972658 0.0495891 -0.132873
+  children [
+    Shape {
+      appearance Appearance {
+        texture ImageTexture {
+          url [
+            "textures/bricks.png"
+          ]
+        }
+      }
+      geometry DEF ballGeometry Sphere {
+        radius 0.05
+        subdivision 2
+      }
+    }
+  ]
+  boundingObject USE ballGeometry
+  physics Physics {
+  }
+}
+DEF WALL1 Solid {
+  translation 0 0.05 0.52
+  children [
+    Shape {
+      appearance DEF blue Appearance {
+        material Material {
+          diffuseColor 0 0 1
+        }
+      }
+      geometry DEF wall Box {
+        size 1 0.1 0.05
+      }
+    }
+  ]
+  boundingObject USE wall
+}
+DEF WALL2 Solid {
+  translation 0 0.05 -0.52
+  children [
+    Shape {
+      geometry USE wall
+    }
+  ]
+  boundingObject USE wall
+}
+DEF WALL3 Solid {
+  translation -0.52 0.05 0
+  rotation 0 1 0 1.57
+  children [
+    Shape {
+      geometry USE wall
+    }
+  ]
+  boundingObject USE wall
+}
+DEF WALL4 Solid {
+  translation 0.52 0.05 0
+  rotation 0 1 0 1.57
+  children [
+    Shape {
+      geometry USE wall
+    }
+  ]
+  boundingObject USE wall
+}
