@@ -48,7 +48,8 @@ int find_middle(int tab[], int sizeTab){
   int *copy = (int *)malloc(sizeof(int)*sizeTab);
   int mean=0;
   int nb_best = sizeTab/10;
-  ////a tenth of camera width
+  ////nb_best will be working on a tenth of the camera width, thus sizeTab, 
+  ////which is equal to width of the camera view, is deived by 10
   int *index_bests = (int *)malloc(sizeof(int)*nb_best);
   
   // copy the tab, calculate the mean and
@@ -58,16 +59,22 @@ int find_middle(int tab[], int sizeTab){
     copy[i]=tab[i];
     mean+=tab[i];
     if (tab[i]!=tab[0]) identical=0;
-	////if last pixel!=1st pixel, identical==0
+	////if last pixel of the 1st line of the camera does not equal the 1st pixel of the camera, identical==0
   }
   if (identical) {
     free(copy);
 	free(index_bests);
     return sizeTab/2;
-	////delta in lfm()==sizeTab/2 if last and 1st pixel r same
+	////if 1st and last pixel of the topmost row of pixels of the camera width have the same value,
+	////value of sizeTab/2 is return to delta in lfm(), which eventually equates lfm_speed[LEFT] and lfm_speed[RIGHT] to 0
+	////This means that if 
+	////the whole body of Epuck is within the line and it does not see the edge of the line in the topmost row of its camera,
+	////or if
+	////the whole body is outside of the line and it does not see any part of the black line,
+	////Epuck will continue to move straight forward at the default speed
   }
   mean/=sizeTab;
-  ////mean==avg value of all the pixel in the line
+  ////mean will be assigned the average value of all the pixels in the topmost row of pixel
   
   // take the best values of the tab
   for (i=0; i<nb_best; i++){
@@ -76,16 +83,19 @@ int find_middle(int tab[], int sizeTab){
     int max=0;
     for (j=0; j<sizeTab; j++){
       if (max<copy[j] && copy[j]>mean){
-        max=copy[j];//finding the blackest pixel//stuck at the 1st blackest pixel?
+        max=copy[j];
         index=j;
+		////The index of the blackest pixel will be saved in max
+		////Only the 1st of the blackest pixel will be stored and would not be overwritten
       }
     }
     index_bests[i]=index;
-    if (index >=0 && index < sizeTab)//if the blackest pixel not the 1st or last pixel in the top line of camera
+    if (index >=0 && index < sizeTab)
+	//if the blackest pixel not the 1st or last pixel in the topmost row of pixel of the camera
       copy[index]=0;
   }
   free(copy);
-  // calculate the position mean of th best values
+  // calculate the position mean of the best values
   int firstMean=0;
   int count=0;
   for (i=0; i<nb_best; i++){
@@ -100,7 +110,7 @@ int find_middle(int tab[], int sizeTab){
   }
   firstMean/=count;
 
-  // eliminate extrem values
+  // eliminate extreme values
   int secondMean=0;
   count=0;
   for (i=0; i<nb_best; i++){
@@ -139,7 +149,8 @@ void lfm(int array[], int size){
   if (lfm_active){
     int delta = find_middle(array,size)-width/2;
     lfm_speed[LEFT]=MAX_DELTA*delta/size;
-    lfm_speed[RIGHT]=-lfm_speed[LEFT];////give adjustments to default speed, speed[LEFT] and  speed[right]
+    lfm_speed[RIGHT]=-lfm_speed[LEFT];
+	////give adjustments to default speed, speed[LEFT] and  speed[right]
   } else {
     lfm_speed[RIGHT]=lfm_speed[LEFT]=0;
   }
@@ -158,9 +169,9 @@ void lem(int array[], int size){
   int i;
   
   for (i=0;i<size/10;i++){
-    left[i]=array[i];////value of top most line of camera on leftmost tenth pixels
-    right[i]=array[size-1-i];////value of top most line of camera on rightmost tenth pixels
-    middle[i]=array[size/2-size/20+i];////value of middle tenth of pixel of camera(start at twentith frm middle of camera)
+    left[i]=array[i];////array of values of the leftmost tenth of the topmost row of the camera
+    right[i]=array[size-1-i];////array of values of the rightmost tenth of the topmost row of the camera
+    middle[i]=array[size/2-size/20+i];////value of middle tenth of pixels of camera
   }
   
   current_mean[0] = mean(left, size/10);
@@ -256,7 +267,7 @@ static int run(void) {
   for (i = 0; i < width; i++) {
     grey[i] = 255-wb_camera_image_get_grey(image, width, i, 0);
 	////0 = black, 255 = white, so 255-0=255 in grey[i] = black (value representation is now reversed
-	////capture just 1 line for the width at the top of the camera vision
+	////capture just topmost row for the width of the camera vision
   }
   
   // 2. Behavior-based robotic:
